@@ -1,0 +1,126 @@
+﻿@inherits Lease.Web.Helpers.Validations
+@page "/"
+@page "/lease"
+
+<Card Margin="Margin.Is3" Padding="Padding.Is3" Class="lease-card">
+    @if (DisplayMessageClass != "success")
+    {
+        <CardTitle Alignment="TextAlignment.Center" Class="text-white"><h5>Start a New Lease</h5></CardTitle>
+        <EditForm Model="Lease" OnValidSubmit="OnFormSubmit_Valid" OnInvalidSubmit="OnFormSubmit_Invalid">
+            <DataAnnotationsValidator />
+            <Validations Mode="ValidationMode.Auto" Model="Lease">
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is6.OnDesktop.Is12.OnMobile">
+                        <FieldLabel Class="text-white">Street Address</FieldLabel>
+                        <TextEdit Placeholder="123" @bind-Text="Lease.StreetAddress" />
+                    </Field>
+                    <Field ColumnSize="ColumnSize.Is6.OnDesktop.Is12.OnMobile">
+                        <FieldLabel Class="text-white">Apt / Other</FieldLabel>
+                        <TextEdit Placeholder="123" @bind-Text="Lease.Appartement" />
+                    </Field>
+                </Fields>
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is6.OnDesktop.Is12.OnMobile">
+                        <FieldLabel Class="text-white">City</FieldLabel>
+                        <TextEdit Placeholder="123" @bind-Text="Lease.City" />
+                    </Field>
+                    <Field ColumnSize="ColumnSize.Is6.OnDesktop.Is12.OnMobile">
+                        <FieldLabel Class="text-white">State</FieldLabel>
+                        <Select TValue="int" @bind-SelectedValue="Lease.StateId">
+                            <SelectItem Value="0">Select State</SelectItem>
+                            @if (States != null)
+                            {
+                                @foreach (var state in States)
+                                {
+                                    <SelectItem Value="@state.StateId">@state.StateName</SelectItem>
+                                }
+                            }
+                        </Select>
+                    </Field>
+                </Fields>
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is12.OnDesktop.Is12.OnMobile">
+                        <FieldLabel Class="text-white">Zip Code*</FieldLabel>
+                        <Validation UsePattern="true">
+                            <TextEdit Placeholder="Ex: 55555" @bind-Text="Lease.ZipCode" Pattern="^\b\d{5}\b$">
+                                <Feedback>
+                                    <ValidationError>Please Enter a Valid Delivery Address.</ValidationError>
+                                </Feedback>
+                            </TextEdit>
+                        </Validation>
+                    </Field>
+                </Fields>
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is12">
+                        <FieldLabel Class="text-white">*Required</FieldLabel>
+                    </Field>
+                </Fields>
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is7.OnDesktop.Is9.OnMobile">
+                        <FieldLabel Class="text-white">Delivery fee:</FieldLabel>
+                    </Field>
+
+                    <Field ColumnSize="ColumnSize.Is5.OnDesktop.Is3.OnMobile" Float="Float.Right">
+                        <input type="submit" value="Estimate" class="lease-btn" />
+                    </Field>
+                </Fields>
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is7.OnDesktop.Is9.OnMobile">
+                        <Field ColumnSize="ColumnSize.Is12" Horizontal="true" Class="lease-term-container">
+                            <FieldLabel Class="text-white">Select Term: &nbsp;&nbsp;</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is6.OnDesktop.Is7.OnMobile">
+                                <Validation Validator="@ValidateSelectInt">
+                                    <Select TValue="int" @bind-SelectedValue="Lease.TermId">
+                                        <ChildContent>
+                                            <SelectItem Value="0">Select Term</SelectItem>
+                                            @if (Terms != null)
+                                            {
+                                                @foreach (var term in Terms)
+                                                {
+                                                    <SelectItem Value="@term.TermId">@term.TermName</SelectItem>
+                                                }
+                                            }
+                                        </ChildContent>
+                                    </Select>
+                                </Validation>
+                            </FieldBody>
+                        </Field>
+                    </Field>
+                    <Field ColumnSize="ColumnSize.Is5.OnDesktop.Is3.OnMobile" Float="Float.Right">
+                        <input type="submit" value="Start Lease" class="lease-btn mt-4" />
+                    </Field>
+                </Fields>
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is12" Margin="Margin.Is0">
+                        <Text Class="text-white">Delivery fee is subject to lorem ipsum dolor sit amet, consectectur adipiscing elit.</Text>
+                    </Field>
+                </Fields>
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is4.OnDesktop.Is12.OnMobile">
+                        <Text Class="text-white">All orders are back by</Text>
+                    </Field>
+                    <Field ColumnSize="ColumnSize.Is4.OnDesktop.Is12.OnMobile">
+                        <Text Class="text-white">-- We are committed to your 100% satisfaction.</Text>
+                    </Field>
+                </Fields>
+            </Validations>
+        </EditForm>
+    }
+    @if (DisplayMessage != "")
+    {
+        <Alert @ref="FormAlert" Color="@(DisplayMessageClass == "success" ? Color.Success : Color.Danger)">
+            <AlertDescription>
+                @DisplayMessage
+            </AlertDescription>
+            @if (DisplayMessageClass == "success")
+            {
+                <AlertMessage>
+                    <NavLink href="/lease" @onclick="RedirectToHome" Match="NavLinkMatch.All">
+                        Start New Lease
+                    </NavLink>
+                </AlertMessage>
+            }
+            <CloseButton Clicked="CloseFormAlert" />
+        </Alert>
+    }
+</Card>
